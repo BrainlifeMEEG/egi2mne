@@ -11,6 +11,7 @@ Converts EGI EEG `.raw` files to MNE-compatible `.fif` format using `mne.io.read
 
 - **egi**: EGI `.raw` EEG data file
 - **include** (optional): Comma-separated list of channels to include during conversion
+- **bads** (optional): Comma-separated list of channels to mark as bad
 
 ## Outputs
 
@@ -25,6 +26,7 @@ Converts EGI EEG `.raw` files to MNE-compatible `.fif` format using `mne.io.read
 
 ### Optional
 - `include`: Comma-separated channel names to select (e.g., "D101,D102,D103"). If empty or "None", all channels are included.
+- `bads`: Comma-separated channel names to mark as bad (e.g., "D101,D115"). Marked channels will be excluded from analysis by downstream processing steps.
 
 ## Usage
 

@@ -8,6 +8,7 @@ and produces output raw data in the standard MNE format for downstream processin
 Input:
     - egi: Path to EGI .raw file
     - include: Optional comma-separated list of channels to include
+    - bads: Optional comma-separated list of channels to mark as bad
 
 Output:
     - out_dir/raw.fif: MNE raw data file
@@ -61,6 +62,15 @@ else:
 # Read EGI raw data
 raw = mne.io.read_raw_egi(fname, include=include)
 
+# == MARK BAD CHANNELS ==
+bads_raw = config.get('bads', '')
+if bads_raw and bads_raw != 'None':
+    bads = [ch.strip() for ch in bads_raw.split(',')]
+    # Filter to only include channels that exist in the data
+    bads = [ch for ch in bads if ch in raw.ch_names]
+    if bads:
+        raw.info['bads'] = bads
+
 # == CREATE REPORT ==
 report = mne.Report(title='EGI to MNE Conversion Report')
 report.add_raw(raw=raw, title='Raw Data')
@@ -79,6 +89,11 @@ product_items = []
 # Add raw info
 info_msg = str(raw.info)
 add_info_to_product(product_items, info_msg)
+
+# Add bad channels information if any
+if raw.info['bads']:
+    bads_msg = f"Bad channels marked: {', '.join(raw.info['bads'])}"
+    add_info_to_product(product_items, bads_msg)
 
 # Add channel positions if available
 positions = raw._get_channel_positions()
