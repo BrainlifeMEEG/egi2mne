@@ -1,27 +1,59 @@
-# app_egi2mne
+# app-egi2mne
 
 [![Abcdspec-compliant](https://img.shields.io/badge/ABCD_Spec-v1.1-green.svg)](https://github.com/brain-life/abcd-spec)
 [![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-bl.app.742-blue.svg)](https://doi.org/10.25663/brainlife.app.742)
 
-## Documentation
-Converts EEG `.egi` EGI files to MNE raw data, using `mne.io.read_raw_egi` function from MNE-python.
+## Description
 
-1) Input file is:
-    * `eeg/egi` eeg data file
-2) Ouput files are:
-    * `meeg/mne/raw` meg raw.fif data file
+Converts EGI EEG `.raw` files to MNE-compatible `.fif` format using `mne.io.read_raw_egi` from MNE-Python. This app enables downstream processing of EGI data through the Brainlife.io ecosystem.
+
+## Inputs
+
+- **egi**: EGI `.raw` EEG data file
+- **include** (optional): Comma-separated list of channels to include during conversion
+
+## Outputs
+
+- **out_dir/raw.fif**: Converted raw data in MNE format
+- **out_dir/report.html**: QC report containing raw data summary and channel information
+- **product.json**: Metadata with channel information and positions
+
+## Configuration Parameters
+
+### Required
+- `egi`: Path to the input EGI `.raw` file
+
+### Optional
+- `include`: Comma-separated channel names to select (e.g., "D101,D102,D103"). If empty or "None", all channels are included.
+
+## Usage
+
+The app processes the EGI file and generates:
+1. A converted `.fif` file ready for downstream MNE processing
+2. An HTML report with channel information and raw data visualization
+3. A product.json file with metadata for Brainlife.io
+
+## Technical Details
+
+- Execution: Singularity container with brainlife/mne Docker image
+- Format conversion: EGI `.raw` → MNE `.fif`
+- Channel filtering: Optional channel selection during conversion
+- Report generation: MNE Report object for quality control
 
 ## Authors
+
 - [Guiomar Niso](guiomar.niso@cajal.csic.es), Instituto Cajal, CSIC, Spain
 
 ## Citations
-We kindly ask that you cite the following articles when publishing papers and code using this app. 
 
-**brainlife. io: A decentralized and open source cloud platform to support neuroscience research**. Hayashi, S., Caron, B. A., et al. & Pestilli, F. (2023). ArXiv. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10274934/
+We kindly ask that you cite the following articles when publishing papers and code using this app:
 
-**MEG and EEG data analysis with MNE-Python**. Gramfort A, et al. & Hämäläinen MS. (2013). Frontiers in Neuroscience, 7(267):1–13, 2013. https://doi.org/10.3389/fnins.2013.00267
+**brainlife.io: A decentralized and open source cloud platform to support neuroscience research**. Hayashi, S., Caron, B. A., et al. & Pestilli, F. (2023). ArXiv. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10274934/
+
+**MEG and EEG data analysis with MNE-Python**. Gramfort A, et al. & Hämäläinen MS. (2013). Frontiers in Neuroscience, 7(267):1–13. https://doi.org/10.3389/fnins.2013.00267
 
 ## Funding Acknowledgement
+
 brainlife.io is publicly funded and for the sustainability of the project we kindly ask that you acknowledge the following funding sources:
 
 [![NSF-BCS-1734853](https://img.shields.io/badge/NSF_BCS-1734853-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1734853)
@@ -29,6 +61,5 @@ brainlife.io is publicly funded and for the sustainability of the project we kin
 [![NSF-ACI-1916518](https://img.shields.io/badge/NSF_ACI-1916518-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1916518)
 [![NSF-IIS-1912270](https://img.shields.io/badge/NSF_IIS-1912270-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1912270)
 [![NIH-NIBIB-R01EB030896](https://img.shields.io/badge/NIH_NIBIB-R01EB030896-green.svg)](https://grantome.com/grant/NIH/R01-EB030896-01)
-
 
 #### MIT Copyright (c) 2021 brainlife.io The University of Texas at Austin and Indiana University
