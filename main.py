@@ -37,7 +37,8 @@ from brainlife_utils import (
     setup_matplotlib_backend,
     ensure_output_dirs,
     create_product_json,
-    add_info_to_product
+    add_info_to_product,
+    add_raw_info_to_product
 )
 
 # Set up matplotlib for headless execution
@@ -86,9 +87,8 @@ report.save(os.path.join('out_dir', 'report.html'), overwrite=True)
 # == CREATE PRODUCT JSON ==
 product_items = []
 
-# Add raw info
-info_msg = str(raw.info)
-add_info_to_product(product_items, info_msg)
+# Add structured raw info messages
+add_raw_info_to_product(product_items, raw)
 
 # Add bad channels information if any
 if raw.info['bads']:
