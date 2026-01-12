@@ -12,7 +12,7 @@ Input:
 
 Output:
     - out_dir/raw.fif: MNE raw data file
-    - out_dir/report.html: QC report with channel information
+    - out_report/report.html: QC report with channel information
     - product.json: Metadata with channel info and positions
 """
 
@@ -45,7 +45,7 @@ from brainlife_utils import (
 setup_matplotlib_backend()
 
 # Ensure output directories exist
-ensure_output_dirs('out_dir')
+ensure_output_dirs('out_dir', 'out_report')
 
 # Load configuration
 config = load_config()
@@ -82,7 +82,7 @@ report.add_html(title='Channels', html=channel_info_html)
 
 # == SAVE DATA ==
 raw.save(os.path.join('out_dir', 'raw.fif'), overwrite=True)
-report.save(os.path.join('out_dir', 'report.html'), overwrite=True)
+report.save(os.path.join('out_report', 'report.html'), overwrite=True)
 
 # == CREATE PRODUCT JSON ==
 product_items = []

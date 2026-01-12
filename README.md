@@ -16,7 +16,7 @@ Converts EGI EEG `.raw` files to MNE-compatible `.fif` format using `mne.io.read
 ## Outputs
 
 - **out_dir/raw.fif**: Converted raw data in MNE format
-- **out_dir/report.html**: QC report containing raw data summary and channel information
+- **out_report/report.html**: QC report containing raw data summary and channel information
 - **product.json**: Metadata with channel information and positions
 
 ## Configuration Parameters
