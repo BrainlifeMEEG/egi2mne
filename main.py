@@ -16,12 +16,13 @@ Output:
     - product.json: Metadata with channel info and positions
 """
 
-# Copyright (c) 2020 brainlife.io
+# Copyright (c) 2026 brainlife.io
 #
 # This app converts EGI EEG files to MNE raw format.
 #
-# Author: Guiomar Niso
-# Indiana University
+# Authors:
+# - Guiomar Niso (https://github.com/guiomar)
+# - Maximilien Chaumon (https://github.com/dnacombo)
 
 import sys
 import os
