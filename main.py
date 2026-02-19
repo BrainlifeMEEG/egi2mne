@@ -106,5 +106,7 @@ if positions is not None and np.any(~np.isnan(positions)):
 else:
     add_info_to_product(product_items, f"Channels (no positions available): {', '.join(raw.ch_names)}")
 
+add_info_to_product(product_items, "Imported EGI .raw file and converted to MNE format successfully.", msg_type='success')
+
 create_product_json(product_items)
     
