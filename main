@@ -14,6 +14,6 @@
 mkdir -p out_dir
 
 #python main.py
-singularity exec docker://brainlife/mne:1.2.1 python3 main.py
+singularity exec docker://aunnikri642/app-freesurfer-mne-source-recon python3 main.py
 
 
