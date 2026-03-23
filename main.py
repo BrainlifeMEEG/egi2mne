@@ -61,8 +61,11 @@ if include_raw and include_raw != 'None':
 else:
     include = None
 
+# Parse events_as_annotations if specified
+events_as_annotations = config.get('events_as_annotations', True)
+
 # Read EGI raw data
-raw = mne.io.read_raw_egi(fname, include=include)
+raw = mne.io.read_raw_egi(fname, include=include, events_as_annotations=events_as_annotations)
 
 # == MARK BAD CHANNELS ==
 bads_raw = config.get('bads', '')
