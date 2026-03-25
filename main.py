@@ -7,8 +7,13 @@ and produces output raw data in the standard MNE format for downstream processin
 
 Input:
     - egi: Path to EGI .raw file
-    - include: Optional comma-separated list of channels to include
+    - eog: Optional comma-separated list of channels to mark as EOG
+    - misc: Optional comma-separated list of channels to mark as miscellaneous
+    - include: Optional comma-separated list of channels to use to create
+      synthetic trigger annotations.
     - bads: Optional comma-separated list of channels to mark as bad
+    - events_as_annotations: If True, annotations are created from experiment events.
+    If False, a synthetic trigger channel STI 014 is created from experiment events.
 
 Output:
     - out_dir/raw.fif: MNE raw data file
@@ -53,6 +58,16 @@ config = load_config()
 
 # == LOAD DATA ==
 fname = config['egi']
+eog = config.get('eog', None)
+if eog is not None:
+    eog = [ch.strip() for ch in eog.split(',')]
+else:
+    eog = None
+misc = config.get('misc', None)
+if misc is not None:
+    misc = [ch.strip() for ch in misc.split(',')]
+else:
+    misc = None
 
 # Parse included channels if specified
 include_raw = config.get('include', '')
@@ -65,7 +80,7 @@ else:
 events_as_annotations = config.get('events_as_annotations', True)
 
 # Read EGI raw data
-raw = mne.io.read_raw_egi(fname, include=include, events_as_annotations=events_as_annotations)
+raw = mne.io.read_raw_egi(fname, eog=eog, misc=misc, include=include, events_as_annotations=events_as_annotations)
 
 # == MARK BAD CHANNELS ==
 bads_raw = config.get('bads', '')
@@ -93,6 +108,10 @@ product_items = []
 
 # Add structured raw info messages
 add_raw_info_to_product(product_items, raw)
+
+if include is not None:
+    included_channels_msg = f"Combined channels {', '.join(include)} into synthetic trigger annotations." if include else "No channels were included for synthetic trigger channel STI014."
+    add_info_to_product(product_items, included_channels_msg, msg_type='success')
 
 # Add bad channels information if any
 if raw.info['bads']:
