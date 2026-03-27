@@ -80,7 +80,8 @@ else:
 events_as_annotations = config.get('events_as_annotations', True)
 
 # Read EGI raw data
-raw = mne.io.read_raw_egi(fname, eog=eog, misc=misc, include=include, events_as_annotations=events_as_annotations)
+raw = mne.io.read_raw_egi(fname, eog=eog, misc=misc, include=include,
+                          events_as_annotations=events_as_annotations)
 
 # == MARK BAD CHANNELS ==
 bads_raw = config.get('bads', '')
@@ -110,7 +111,10 @@ product_items = []
 add_raw_info_to_product(product_items, raw)
 
 if include is not None:
-    included_channels_msg = f"Combined channels {', '.join(include)} into synthetic trigger annotations." if include else "No channels were included for synthetic trigger channel STI014."
+    if events_as_annotations:
+        included_channels_msg = f"Combined channels {', '.join(include)} into annotations."
+    else:
+        included_channels_msg = f"Combined channels {', '.join(include)} to create synthetic trigger channel STI014." 
     add_info_to_product(product_items, included_channels_msg, msg_type='success')
 
 # Add bad channels information if any
