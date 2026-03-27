@@ -114,6 +114,8 @@ if include is not None:
     if events_as_annotations:
         included_channels_msg = f"Combined channels {', '.join(include)} into annotations."
     else:
+        if 'STI 014' not in raw.ch_names:
+            raise ValueError("STI 014 channel was not created as expected.")
         included_channels_msg = f"Combined channels {', '.join(include)} to create synthetic trigger channel STI014." 
     add_info_to_product(product_items, included_channels_msg, msg_type='success')
 
