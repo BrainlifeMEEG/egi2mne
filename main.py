@@ -113,11 +113,14 @@ add_raw_info_to_product(product_items, raw)
 if include is not None:
     if events_as_annotations:
         included_channels_msg = f"Combined channels {', '.join(include)} into annotations."
+        add_info_to_product(product_items, included_channels_msg, msg_type='success')
     else:
         if 'STI 014' not in raw.ch_names:
-            raise ValueError("STI 014 channel was not created as expected.")
-        included_channels_msg = f"Combined channels {', '.join(include)} to create synthetic trigger channel STI014." 
-    add_info_to_product(product_items, included_channels_msg, msg_type='success')
+            include_channels_msg = f"Warning: 'STI 014' channel not found after including channels {', '.join(include)}. Check if events_as_annotations is set correctly."
+            add_info_to_product(product_items, include_channels_msg, msg_type='error')
+        else:
+            included_channels_msg = f"Combined channels {', '.join(include)} to create synthetic trigger channel STI014."
+            add_info_to_product(product_items, included_channels_msg, msg_type='success')
 
 # Add bad channels information if any
 if raw.info['bads']:
