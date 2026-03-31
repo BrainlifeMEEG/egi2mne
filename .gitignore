@@ -1,2 +1,4 @@
 config.json
 /out_dir/
+/config.json
+/out_report/
