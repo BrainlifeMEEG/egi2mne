@@ -18,6 +18,7 @@ Input:
 Output:
     - out_dir/raw.fif: MNE raw data file
     - out_report/report.html: QC report with channel information
+    - out_figs/psd.png: Power Spectral Density plot
     - product.json: Metadata with channel info and positions
 """
 
@@ -36,6 +37,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'brainlife_utils'))
 # Standard imports
 import mne
 import numpy as np
+import matplotlib.pyplot as plt
 
 # Import shared utilities
 from brainlife_utils import (
@@ -44,6 +46,7 @@ from brainlife_utils import (
     ensure_output_dirs,
     create_product_json,
     add_info_to_product,
+    add_image_to_product,
     add_raw_info_to_product
 )
 
@@ -51,7 +54,7 @@ from brainlife_utils import (
 setup_matplotlib_backend()
 
 # Ensure output directories exist
-ensure_output_dirs('out_dir', 'out_report')
+ensure_output_dirs('out_dir', 'out_report', 'out_figs')
 
 # Load configuration
 config = load_config()
@@ -104,6 +107,11 @@ report.add_html(title='Channels', html=channel_info_html)
 raw.save(os.path.join('out_dir', 'raw.fif'), overwrite=True)
 report.save(os.path.join('out_report', 'report.html'), overwrite=True)
 
+# == CREATE PSD PLOT ==
+fig = raw.compute_psd().plot(exclude='bads', show=False)
+fig.savefig(os.path.join('out_figs', 'psd.png'), dpi=100, bbox_inches='tight')
+plt.close(fig)
+
 # == CREATE PRODUCT JSON ==
 product_items = []
 
@@ -138,6 +146,11 @@ else:
     add_info_to_product(product_items, f"Channels (no positions available): {', '.join(raw.ch_names)}")
 
 add_info_to_product(product_items, "Imported EGI .raw file and converted to MNE format successfully.", msg_type='success')
+
+# Add PSD plot if it exists
+psd_image_path = os.path.join('out_figs', 'psd.png')
+if os.path.exists(psd_image_path):
+    add_image_to_product(product_items, name='Power Spectral Density (PSD)', filepath=psd_image_path)
 
 create_product_json(product_items)
     
