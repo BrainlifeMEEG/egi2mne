@@ -5,3 +5,4 @@ config.json
 /in_dir/
 .gitignore
 
+/out_figs/
