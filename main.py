@@ -119,7 +119,6 @@ if bads_raw and bads_raw != 'None':
 else:
     bads = []
 
-print('WTF!!')
 # == CREATE REPORT ==
 report = mne.Report(title='EGI to MNE Conversion Report')
 report.add_raw(raw=raw, title='Raw Data')
