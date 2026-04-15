@@ -8,6 +8,7 @@ and produces output raw data in the standard MNE format for downstream processin
 Input:
     - egi: Path to EGI .raw file
     - eog: Optional comma-separated list of channels to mark as EOG
+    - ecg: Optional comma-separated list of channels to mark as ECG
     - misc: Optional comma-separated list of channels to mark as miscellaneous
     - include: Optional comma-separated list of channels to use to create
       synthetic trigger annotations.
