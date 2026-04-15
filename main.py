@@ -67,6 +67,11 @@ if eog is not None:
     eog = [ch.strip() for ch in eog.split(',')]
 else:
     eog = None
+ecg = config.get('ecg', None)
+if ecg is not None:
+    ecg = [ch.strip() for ch in ecg.split(',')]
+else:
+    ecg = None
 misc = config.get('misc', None)
 if misc is not None:
     misc = [ch.strip() for ch in misc.split(',')]
@@ -87,9 +92,19 @@ events_as_annotations = config.get('events_as_annotations', True)
 raw = mne.io.read_raw_egi(fname, eog=eog, misc=misc, include=include,
                           events_as_annotations=events_as_annotations)
 
-already_bad = raw.info['bads']
+already_bad = raw.info['bads'].copy()
 if already_bad:
     print(f"Channels already marked as bad in the EGI file: {', '.join(already_bad)}")
+
+if config.get('rm_flat', True):
+    # remove any channel that is strictly flat
+    idx = np.std(raw.get_data(), axis=1) == 0
+    flat_channels = [raw.info['ch_names'][i] for i in np.where(idx)[0]]
+    if flat_channels:
+        raw.info['bads'].extend(flat_channels)
+        raw.info['bads'] = list(set(raw.info['bads']))  # Remove duplicates
+        print(f"Flat channels marked as bads: {', '.join(flat_channels)}")
+
        
 # == MARK BAD CHANNELS ==
 bads_raw = config.get('bads', '')
@@ -115,7 +130,7 @@ report.add_html(title='Channels', html=channel_info_html)
 
 # == SAVE DATA ==
 raw.save(os.path.join('out_dir', 'raw.fif'), overwrite=True)
-report.save(os.path.join('out_report', 'report.html'), overwrite=True)
+report.save(os.path.join('out_report', 'report.html'), overwrite=True, open_browser=False)
 
 # == CREATE PSD PLOT ==
 fig = raw.compute_psd().plot(exclude='bads', show=False)
@@ -143,8 +158,11 @@ if include is not None:
 # Add bad channels information if any
 if raw.info['bads']:
     already_bad_msg = f"Channels already marked as bad in the EGI file: {', '.join(already_bad)}" if already_bad else "No channels were marked as bad in the original EGI file."
-    bads_msg = f"Bad channels marked: {', '.join(bads)}" if bads else "No additional bad channels marked from config."
     add_info_to_product(product_items, already_bad_msg, 'warning' if already_bad else 'info')
+    if config.get('rm_flat', True):
+        flat_msg = f"Flat channels marked: {', '.join(flat_channels)}" if flat_channels else "No flat channels detected."
+        add_info_to_product(product_items, flat_msg, 'warning' if flat_channels else 'info')
+    bads_msg = f"Bad channels marked: {', '.join(bads)}" if bads else "No additional bad channels marked from config."
     add_info_to_product(product_items, bads_msg, 'info')
     final_bads_msg = f"Total bad channels marked: {', '.join(raw.info['bads'])}"
     add_info_to_product(product_items, final_bads_msg, 'success')
