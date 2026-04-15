@@ -2,3 +2,6 @@ config.json
 /out_dir/
 /config.json
 /out_report/
+/in_dir/
+.gitignore
+

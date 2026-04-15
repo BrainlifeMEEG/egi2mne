@@ -86,6 +86,10 @@ events_as_annotations = config.get('events_as_annotations', True)
 raw = mne.io.read_raw_egi(fname, eog=eog, misc=misc, include=include,
                           events_as_annotations=events_as_annotations)
 
+already_bad = raw.info['bads']
+if already_bad:
+    print(f"Channels already marked as bad in the EGI file: {', '.join(already_bad)}")
+       
 # == MARK BAD CHANNELS ==
 bads_raw = config.get('bads', '')
 if bads_raw and bads_raw != 'None':
@@ -93,7 +97,12 @@ if bads_raw and bads_raw != 'None':
     # Filter to only include channels that exist in the data
     bads = [ch for ch in bads if ch in raw.ch_names]
     if bads:
-        raw.info['bads'] = bads
+        raw.info['bads'].extend(bads)
+        raw.info['bads'] = list(set(raw.info['bads']))  # Remove duplicates
+        print(f"Newly marked as bads: {', '.join(bads)}")
+else:
+    bads = []
+
 
 # == CREATE REPORT ==
 report = mne.Report(title='EGI to MNE Conversion Report')
@@ -132,8 +141,12 @@ if include is not None:
 
 # Add bad channels information if any
 if raw.info['bads']:
-    bads_msg = f"Bad channels marked: {', '.join(raw.info['bads'])}"
-    add_info_to_product(product_items, bads_msg)
+    already_bad_msg = f"Channels already marked as bad in the EGI file: {', '.join(already_bad)}" if already_bad else "No channels were marked as bad in the original EGI file."
+    bads_msg = f"Bad channels marked: {', '.join(bads)}" if bads else "No additional bad channels marked from config."
+    add_info_to_product(product_items, already_bad_msg, 'warning' if already_bad else 'info')
+    add_info_to_product(product_items, bads_msg, 'info')
+    final_bads_msg = f"Total bad channels marked: {', '.join(raw.info['bads'])}"
+    add_info_to_product(product_items, final_bads_msg, 'success')
 
 # Add channel positions if available
 positions = raw._get_channel_positions()
