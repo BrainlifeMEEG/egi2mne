@@ -98,7 +98,7 @@ if already_bad:
 
 if config.get('rm_flat', True):
     # remove any channel that is strictly flat
-    idx = np.std(raw.get_data(picks='eeg'), axis=1) == 0
+    idx = np.std(raw.get_data(picks='data'), axis=1) == 0
     flat_channels = [raw.info['ch_names'][i] for i in np.where(idx)[0]]
     if flat_channels:
         raw.info['bads'].extend(flat_channels)
