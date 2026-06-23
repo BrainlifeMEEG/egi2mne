@@ -1,0 +1,36 @@
+name: CI BrainLife App Tests
+
+# 1. Déclencheurs : Quand lancer les tests ?
+on:
+  push:
+    branches: [ "main", "master", "testCI" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest # On utilise un serveur Linux standard
+
+    steps:
+    # Étape A : Copier le code de ton dépôt sur le serveur GitHub
+    - name: Récupération du code (Checkout)
+      uses: actions/checkout@v4
+
+    # Étape B : Installer Python
+    - name: Configuration de Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10' # Version stable pour MNE et Pytest
+
+    # Étape C : Installer les outils nécessaires
+    - name: Installation des dépendances
+      run: |
+        python -m pip install --upgrade pip
+        pip install pytest
+        # S'il y a un fichier requirements.txt, on l'utilise. Sinon, on installe MNE manuellement.
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; else pip install mne; fi
+
+    # Étape D : Lancer ton fameux script de test
+    - name: Exécution des scénarios Pytest
+      run: |
+        python -m pytest tests/test_main.py -v

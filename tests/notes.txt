@@ -1,0 +1,8 @@
+COMMANDE A EXECUTER
+
+python -m pytest tests/test_main.py -v
+
+Ne pas oublier lors de l'application de ce test dans un autre dépôt de copier-coller ces deux dossiers à la racine dans le nouveau dépôt:
+
+- Le dossier tests/ (il faudra changer dedans les SCENARIOS et le fichier DATASET_TEST)
+- Le dossier .github/ (il n'y a rien à modifier dans ce dossier qui active Github Workflows)
