@@ -87,7 +87,7 @@ def test_dynamic_application(dataset, test_name, scenario_modifications, should_
     os.makedirs('out_dir', exist_ok=True)
 
     # 4. Run the application as a black box
-    result = subprocess.run(["python", "main.py"], capture_output=True, text=True)
+    result = subprocess.run(["python3", "main.py"], capture_output=True, text=True)
     
     # 5. Assertions according to platform standards
     if should_succeed:
