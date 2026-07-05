@@ -19,6 +19,8 @@ jobs:
     # Étape A : Copier le code de ton dépôt sur le serveur GitHub
     - name: Récupération du code (Checkout)
       uses: actions/checkout@v4
+      with:
+        submodules: recursive
 
     # Étape B : Installer Python
     - name: Configuration de Python
