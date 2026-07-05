@@ -3,9 +3,9 @@ name: CI BrainLife App Tests
 # 1. Déclencheurs : Quand lancer les tests ?
 on:
   push:
-    branches: [ "main", "master", "testCI" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main", "master" ]
+    branches: [ "main" ]
 
 jobs:
   test:
