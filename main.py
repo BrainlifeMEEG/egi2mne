@@ -33,7 +33,7 @@ Output:
 
 import sys
 import os
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'brainlife_utils'))
+sys.path.insert(0, os.path.dirname(__file__))
 
 # Standard imports
 import mne
