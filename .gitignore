@@ -7,3 +7,4 @@ config.json
 
 /out_figs/
 /product.json
+__pycache__/
