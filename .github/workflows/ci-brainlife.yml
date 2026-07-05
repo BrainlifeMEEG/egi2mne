@@ -9,11 +9,12 @@ on:
 
 jobs:
   test:
+    name: test
     runs-on: ubuntu-latest # On utilise un serveur Linux standard
 
     outputs:
       status: ${{ job.status }}
-      
+
     steps:
     # Étape A : Copier le code de ton dépôt sur le serveur GitHub
     - name: Récupération du code (Checkout)
