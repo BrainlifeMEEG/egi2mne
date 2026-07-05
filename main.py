@@ -31,7 +31,6 @@ Output:
 # - Guiomar Niso (https://github.com/guiomar)
 # - Maximilien Chaumon (https://github.com/dnacombo)
 
-this should fail
 import sys
 import os
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'brainlife_utils'))
