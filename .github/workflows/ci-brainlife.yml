@@ -33,10 +33,8 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install pytest
-        # S'il y a un fichier requirements.txt, on l'utilise. Sinon, on installe MNE manuellement.
-        if [ -f requirements.txt ]; then pip install -r requirements.txt; else pip install mne; fi
 
     # Étape D : Lancer ton fameux script de test
     - name: Exécution des scénarios Pytest
       run: |
-        python -m pytest tests/test_main.py -v
+        docker run --rm -v "$(pwd)":/workspace -w /workspace aunnikri642/app-freesurfer-mne-source-recon:latest python -m pytest tests/test_main.py -v
