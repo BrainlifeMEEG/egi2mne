@@ -37,4 +37,4 @@ jobs:
     # Étape D : Lancer ton fameux script de test
     - name: Exécution des scénarios Pytest
       run: |
-        docker run --rm -v "$(pwd)":/workspace -w /workspace aunnikri642/app-freesurfer-mne-source-recon:latest python -m pytest tests/test_main.py -v
+        docker run --rm -v "$(pwd)":/workspace -w /workspace aunnikri642/app-freesurfer-mne-source-recon:latest bash -c "pip install pytest && python -m pytest tests/test_main.py -v"
