@@ -1,46 +1,66 @@
-# app-egi2mne
+# Convert EGI EEG Data to MNE Format
 
 [![Abcdspec-compliant](https://img.shields.io/badge/ABCD_Spec-v1.1-green.svg)](https://github.com/brain-life/abcd-spec)
 [![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-bl.app.742-blue.svg)](https://doi.org/10.25663/brainlife.app.742)
 
 ## Description
 
-Converts EGI EEG `.raw` files to MNE-compatible `.fif` format using `mne.io.read_raw_egi` from MNE-Python. This app enables downstream processing of EGI data through the Brainlife.io ecosystem.
+Converts EGI EEG `.raw` files to MNE-compatible `.fif` format using `mne.io.read_raw_egi` from MNE-Python. Channels can be labeled as EOG, ECG or MISC, additional channels can be marked as bad, and trigger/event channels can be combined either into `mne.Annotations` or into a synthetic `STI 014` trigger channel. Flat (zero-variance) channels are marked as bad by default. This app enables downstream processing of EGI data through the Brainlife.io ecosystem.
+
+The app generates:
+- A converted raw `.fif` file (`out_dir/raw.fif`)
+- A QC report with channel information (`out_report/report.html`)
+- A power spectral density figure (`out_figs/psd.png`)
+- A `product.json` summarizing channel info, bad channels and positions
 
 ## Inputs
 
-- **egi**: EGI `.raw` EEG data file
-- **include** (optional): Comma-separated list of channels to include during conversion
-- **bads** (optional): Comma-separated list of channels to mark as bad
+- **`egi`** (`neuro/eeg/egi`): EGI `.raw` EEG data file to convert (required)
 
 ## Outputs
 
-- **out_dir/raw.fif**: Converted raw data in MNE format
-- **out_report/report.html**: QC report containing raw data summary and channel information
-- **product.json**: Metadata with channel information and positions
+- **`out_dir/raw.fif`** (`neuro/meeg/mne/raw`): converted raw EEG data in MNE format, with EOG/ECG/MISC channel types, bad channels, and trigger/event information applied.
+- **`out_report/report.html`**: QC report containing raw data summary and channel information.
+- **`out_figs/psd.png`**: Power Spectral Density plot of the converted data.
+- **`product.json`**: Metadata with channel information, bad-channel summary and channel positions.
 
 ## Configuration Parameters
 
-### Required
-- `egi`: Path to the input EGI `.raw` file
-
-### Optional
-- `include`: Comma-separated channel names to select (e.g., "D101,D102,D103"). If empty or "None", all channels are included.
-- `bads`: Comma-separated channel names to mark as bad (e.g., "D101,D115"). Marked channels will be excluded from analysis by downstream processing steps.
+| key | type | default | description |
+|---|---|---|---|
+| `eog` | string | `""` (None) | Comma-separated list of channel names to mark as EOG. |
+| `ecg` | string | `""` (None) | Comma-separated list of channel names to mark as ECG. |
+| `misc` | string | `""` (None) | Comma-separated list of channel names to mark as MISC (miscellaneous). |
+| `include` | string | `""` (None) | Comma-separated list of stimulus channel names to combine into trigger events — either `mne.Annotations` or a synthetic `STI 014` channel, depending on `events_as_annotations`. |
+| `bads` | string | `""` (None) | Comma-separated list of channel names to additionally mark as bad. Channels not present in the data are ignored. |
+| `rm_flat` | boolean | `true` | If `true`, channels that are strictly flat (zero variance) are marked as bad. |
+| `events_as_annotations` | boolean | `true` | If `true`, experiment events from the `include` channels are converted to `mne.Annotations`. If `false`, a synthetic trigger channel `STI 014` is created instead. |
 
 ## Usage
 
-The app processes the EGI file and generates:
-1. A converted `.fif` file ready for downstream MNE processing
-2. An HTML report with channel information and raw data visualization
-3. A product.json file with metadata for Brainlife.io
+### Running on Brainlife.io
+
+1. Select this app when building a pipeline/process on Brainlife.io.
+2. Provide an EGI `.raw` file for the `egi` input.
+3. Optionally set EOG/ECG/MISC channels, bad channels, included trigger channels, flat-channel removal, and the events-as-annotations switch; otherwise the defaults above are used.
+4. Submit the process. The converted `.fif` file, QC report and PSD figure are written to the process's output directories.
+
+### Local Testing
+
+```bash
+git clone <this-repo>
+cd egi2mne
+# create config.json with the input file path and any parameters, e.g.:
+# {"egi": "path/to/data.raw"}
+./main
+```
 
 ## Technical Details
 
-- Execution: Singularity container with brainlife/mne Docker image
-- Format conversion: EGI `.raw` → MNE `.fif`
-- Channel filtering: Optional channel selection during conversion
-- Report generation: MNE Report object for quality control
+- Execution: Singularity container with the `brainlifemeeg/mne:1.12.1` Docker image
+- Format conversion: EGI `.raw` → MNE `.fif` via `mne.io.read_raw_egi`
+- Channel typing: EOG/ECG/MISC assignment and bad-channel marking during conversion
+- Report generation: `mne.Report` object for quality control
 
 ## Authors
 
@@ -51,9 +71,9 @@ The app processes the EGI file and generates:
 
 We kindly ask that you cite the following articles when publishing papers and code using this app:
 
-**brainlife.io: A decentralized and open source cloud platform to support neuroscience research**. Hayashi, S., Caron, B. A., et al. & Pestilli, F. (2023). ArXiv. https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10274934/
+Hayashi, S., Caron, B.A., Heinsfeld, A.S. et al. brainlife.io: a decentralized and open-source cloud platform to support neuroscience research. Nat Methods 21, 809–813 (2024). https://doi.org/10.1038/s41592-024-02237-2
 
-**MEG and EEG data analysis with MNE-Python**. Gramfort A, et al. & Hämäläinen MS. (2013). Frontiers in Neuroscience, 7(267):1–13. https://doi.org/10.3389/fnins.2013.00267
+Gramfort, A. et al. MEG and EEG data analysis with MNE-Python. Front. Neurosci. 7, 267 (2013). https://doi.org/10.3389/fnins.2013.00267
 
 ## Funding Acknowledgement
 
@@ -63,12 +83,9 @@ brainlife.io is publicly funded and for the sustainability of the project we kin
 [![NSF-BCS-1636893](https://img.shields.io/badge/NSF_BCS-1636893-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1636893)
 [![NSF-ACI-1916518](https://img.shields.io/badge/NSF_ACI-1916518-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1916518)
 [![NSF-IIS-1912270](https://img.shields.io/badge/NSF_IIS-1912270-blue.svg)](https://nsf.gov/awardsearch/showAward?AWD_ID=1912270)
+[![NIH-NIBIB-R01EB029272](https://img.shields.io/badge/NIH_NIBIB-R01EB029272-green.svg)](https://grantome.com/grant/NIH/R01-EB029272-01)
 [![NIH-NIBIB-R01EB030896](https://img.shields.io/badge/NIH_NIBIB-R01EB030896-green.svg)](https://grantome.com/grant/NIH/R01-EB030896-01)
 
-Copyright (c) 2026 MEEG Brainlife team
+## License
 
-This project is licensed under the AGPL-3.0 License - see [license.txt](license.txt) for details.
-
-## Citation
-
-Hayashi, S., Caron, B.A., Heinsfeld, A.S. et al. brainlife.io: a decentralized and open-source cloud platform to support neuroscience research. Nat Methods 21, 809–813 (2024). https://doi.org/10.1038/s41592-024-02237-2
+Copyright (c) 2026 MEEG Brainlife team. Licensed under AGPL-3.0, see [license.txt](license.txt).
