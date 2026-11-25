@@ -1,5 +1,48 @@
 # Convert EGI EEG Data to MNE Format
 
+<!-- brainlife-app:begin (generated from the App manifest; edit the manifest, not this block) -->
+
+> **Converts an EGI EEG .raw file to MNE-Python raw FIF format with mne.io.read_raw_egi, setting EOG/ECG/MISC channel types, bad channels and trigger events, with a QC report and PSD plot.**
+
+Reads the EGI recording, combines the listed stimulus channels into annotations or a synthetic STI 014 trigger channel, labels EOG/ECG/MISC channels, marks listed and (optionally) flat channels as bad, and writes raw.fif with an HTML report and a power spectral density figure. Use it as the import step for EGI (Geodesic) EEG data before MNE-based processing.
+
+| | |
+|---|---|
+| 📥 **Inputs** | `neuro/eeg/egi` |
+| 📤 **Outputs** | `neuro/meeg/mne/raw` |
+| 🐳 **Container** | `brainlifemeeg/mne:1.12.1` |
+| ⚙️ **Resources** | 8 CPUs · 4 GB memory |
+| 🔗 **Run it** | [doi.org/10.25663/brainlife.app.742](https://doi.org/10.25663/brainlife.app.742) |
+
+#### 📥 Inputs
+
+| Input | Datatype | Required | Description |
+|---|---|---|---|
+| `egi1` | `neuro/eeg/egi` | yes | EGI (Geodesic) EEG recording in .raw format. |
+
+#### 📤 Outputs
+
+| Output | Datatype | Description |
+|---|---|---|
+| `out_dir` | `neuro/meeg/mne/raw` | MNE Raw data in FIF format |
+
+<details>
+<summary><b>⚙️ Parameters</b> (7)</summary>
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `eog` | string |  | EOG channels if any. Default is None. |
+| `ecg` | string |  | ECG channels if any. default is None. |
+| `bads` | string |  | Bad channels (comma separated list). |
+| `include` | string | `D101,D102,D103,D104,D105,D106,D107,D108,D109,D110,D111,D112,D201,D202,D203,D204,D205,D206,D207,D208,D209,D210,D211,D212,DIN1,DIN2` | Which stimulus channels to include (comma separated list). |
+| `misc` | string |  | Names of channels or list of indices that should be designated MISC channels. Default is None. |
+| `rm_flat` | boolean | `true` | Mark flat channels as bad if True (default). |
+| `events_as_annotations` | boolean | `true` | If True, annotations are created from experiment events. If False, a synthetic trigger channel STI 014 is created from experiment events. |
+
+</details>
+
+<!-- brainlife-app:end -->
+
 [![Abcdspec-compliant](https://img.shields.io/badge/ABCD_Spec-v1.1-green.svg)](https://github.com/brain-life/abcd-spec)
 [![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-bl.app.742-blue.svg)](https://doi.org/10.25663/brainlife.app.742)
 
